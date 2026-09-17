@@ -31392,7 +31392,8 @@ function validateSecureReadFileStats(stats, maximumBytes, options) {
   }
 }
 function supportsFileIdentityComparison(stats) {
-  return Number.isSafeInteger(stats.dev) && stats.dev > 0 && Number.isSafeInteger(stats.ino) && stats.ino > 0;
+  const isPositiveIdentity = (value) => typeof value === "bigint" ? value > 0n : typeof value === "number" && Number.isFinite(value) && value > 0;
+  return isPositiveIdentity(stats.dev) && isPositiveIdentity(stats.ino);
 }
 function validateMatchingFileIdentity(pathStats, handleStats) {
   const pathIdentitySupported = supportsFileIdentityComparison(pathStats);

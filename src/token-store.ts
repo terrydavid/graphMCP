@@ -263,12 +263,11 @@ function validateSecureReadFileStats(
 }
 
 function supportsFileIdentityComparison(stats: Stats): boolean {
-  return (
-    Number.isSafeInteger(stats.dev) &&
-    stats.dev > 0 &&
-    Number.isSafeInteger(stats.ino) &&
-    stats.ino > 0
-  );
+  const isPositiveIdentity = (value: number | bigint): boolean =>
+    typeof value === "bigint"
+      ? value > 0n
+      : typeof value === "number" && Number.isFinite(value) && value > 0;
+  return isPositiveIdentity(stats.dev) && isPositiveIdentity(stats.ino);
 }
 
 function validateMatchingFileIdentity(pathStats: Stats, handleStats: Stats): void {
